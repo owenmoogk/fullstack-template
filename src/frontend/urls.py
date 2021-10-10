@@ -9,5 +9,5 @@ accountUrls = [
 
 urlpatterns = [
     path('accounts/', include(accountUrls)),
-    path('', index, name=''),
+    path('', index),
 ]
