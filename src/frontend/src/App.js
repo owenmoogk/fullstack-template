@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Nav from './components/Nav';
 import LoginForm from './components/Login';
 import SignupForm from './components/Signup';
-// import './App.css';
 
 class App extends Component {
 	constructor(props) {
@@ -47,16 +46,6 @@ class App extends Component {
 				});
 			});
 	};
-
-	test(){
-		fetch('users/test/', {
-			method: 'GET',
-			headers: {
-				Authorization: `JWT ${localStorage.getItem('token')}`
-			}
-		})
-	};
-
 
 	handle_signup = (e, data) => {
 		e.preventDefault();
