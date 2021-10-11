@@ -1,121 +1,70 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import Nav from './components/Nav';
-import LoginForm from './components/Login';
-import SignupForm from './components/Signup';
+import Login from './components/Login';
+import Signup from './components/Signup';
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route
+} from 'react-router-dom'
 
-class App extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			displayed_form: '',
-			logged_in: localStorage.getItem('token') ? true : false,
-			username: ''
-		};
-	}
+export default function App(props) {
 
-	componentDidMount() {
-		if (this.state.logged_in) {
-			fetch('users/current_user/', {
+	const [username, setUsername] = useState()
+	const [loggedIn, setLoggedIn] = useState(localStorage.getItem('token') ? true : false)
+
+	useEffect(() => {
+		console.log(loggedIn)
+		if (loggedIn) {
+			fetch('/users/current_user/', {
 				headers: {
 					Authorization: `JWT ${localStorage.getItem('token')}`
 				}
 			})
 				.then(res => res.json())
 				.then(json => {
-					this.setState({ username: json.username });
+					setUsername(json.username)
 				});
 		}
-	}
+	})
 
-	test = () => {
-		fetch('users/current_user/', {
+	function test() {
+		fetch('/users/current_user/', {
 			headers: {
 				Authorization: `JWT ${localStorage.getItem('token')}`
 			}
 		})
 	}
 
-	handle_login = (e, data) => {
-		e.preventDefault();
-		fetch('token-auth/', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		})
-			.then(res => res.json())
-			.then(json => {
-				localStorage.setItem('token', json.token);
-				this.setState({
-					logged_in: true,
-					displayed_form: '',
-					username: json.user.username
-				});
-			});
-	};
-
-	handle_signup = (e, data) => {
-		e.preventDefault();
-		fetch('users/users/', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		})
-			.then(res => res.json())
-			.then(json => {
-				localStorage.setItem('token', json.token);
-				this.setState({
-					logged_in: true,
-					displayed_form: '',
-					username: json.username
-				});
-			});
-	};
-
-	handle_logout = () => {
+	function handleLogout() {
 		localStorage.removeItem('token');
-		this.setState({ logged_in: false, username: '' });
+		setLoggedIn(false)
+		setUsername('')
 	};
 
-	display_form = form => {
-		this.setState({
-			displayed_form: form
-		});
-	};
+	return (
 
-	render() {
-		let form;
-		switch (this.state.displayed_form) {
-			case 'login':
-				form = <LoginForm handle_login={this.handle_login} />;
-				break;
-			case 'signup':
-				form = <SignupForm handle_signup={this.handle_signup} />;
-				break;
-			default:
-				form = null;
-		}
-
-		return (
-			<div className="App">
-				<button onClick={this.test}>test</button>
-				<Nav
-					logged_in={this.state.logged_in}
-					display_form={this.display_form}
-					handle_logout={this.handle_logout}
-				/>
-				{form}
-				<h3>
-					{this.state.logged_in
-						? `Hello, ${this.state.username}`
-						: 'Please Log In'}
-				</h3>
-			</div>
-		);
-	}
+		<Router>
+			<button onClick={test}>test</button>
+			<Nav
+				loggedIn={loggedIn}
+				handleLogout={handleLogout}
+			/>
+			<Switch>
+				<Route path="/login">
+					<Login setLoggedIn={setLoggedIn} setUsername={setUsername} />
+				</Route>
+				<Route path="/signup">
+					<Signup setLoggedIn={setLoggedIn} setUsername={setUsername} />
+				</Route>
+				<Route path=''>
+					<h3>
+						{loggedIn
+							? `Hello, ${username}`
+							: 'Not logged in'}
+					</h3>
+				</Route>
+			</Switch>
+		</Router>
+	);
 }
-
-export default App;

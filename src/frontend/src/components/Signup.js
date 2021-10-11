@@ -1,48 +1,45 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 
-class SignupForm extends React.Component {
-  state = {
-    username: '',
-    password: ''
-  };
+export default function Signup(props) {
 
-  handle_change = e => {
-    const name = e.target.name;
-    const value = e.target.value;
-    this.setState(prevstate => {
-      const newState = { ...prevstate };
-      newState[name] = value;
-      return newState;
-    });
-  };
+    const [username, setUsername] = useState()
+    const [password, setPassword] = useState()
 
-  render() {
+    function handleSignup(e) {
+		e.preventDefault();
+		fetch('/users/users/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({username: username, password: password})
+		})
+			.then(res => res.json())
+			.then(json => {
+				localStorage.setItem('token', json.token);
+				props.setLoggedIn(true)
+				props.setUsername(json.user.username)
+			});
+	};
+
     return (
-      <form onSubmit={e => this.props.handle_signup(e, this.state)}>
-        <h4>Sign Up</h4>
-        <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          name="username"
-          value={this.state.username}
-          onChange={this.handle_change}
-        />
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          name="password"
-          value={this.state.password}
-          onChange={this.handle_change}
-        />
-        <input type="submit" />
-      </form>
+        <form onSubmit={e => handleSignup(e)}>
+            <h4>Sign Up</h4>
+            <label htmlFor="username">Username</label>
+            <input
+                type="text"
+                name="username"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+            />
+            <label htmlFor="password">Password</label>
+            <input
+                type="password"
+                name="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+            />
+            <input type="submit" />
+        </form>
     );
-  }
 }
-
-export default SignupForm;
-
-SignupForm.propTypes = {
-  handle_signup: PropTypes.func.isRequired
-};
