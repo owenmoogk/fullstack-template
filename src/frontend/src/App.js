@@ -13,39 +13,34 @@ export default function App(props) {
 	const [username, setUsername] = useState()
 	const [loggedIn, setLoggedIn] = useState(localStorage.getItem('token') ? true : false)
 
-	useEffect(() => {
-		console.log(loggedIn)
-		if (loggedIn) {
-			fetch('/users/current_user/', {
-				headers: {
-					Authorization: `JWT ${localStorage.getItem('token')}`
-				}
-			})
-				.then(res => res.json())
-				.then(json => {
-					setUsername(json.username)
-				});
-		}
-	})
-
-	function test() {
-		fetch('/users/current_user/', {
-			headers: {
-				Authorization: `JWT ${localStorage.getItem('token')}`
-			}
-		})
-	}
-
 	function handleLogout() {
 		localStorage.removeItem('token');
 		setLoggedIn(false)
 		setUsername('')
 	};
 
+	useEffect(() => {
+		if (loggedIn) {
+			fetch('/users/current_user/', {
+				headers: {
+					Authorization: `JWT ${localStorage.getItem('token')}`
+				}
+			})
+				.then(response => response.json())
+				.then(json => {
+					if (json.username){
+						setUsername(json.username)
+					}
+					else{
+						handleLogout()
+					}
+				});
+		}
+	})
+
 	return (
 
 		<Router>
-			<button onClick={test}>test</button>
 			<Nav
 				loggedIn={loggedIn}
 				handleLogout={handleLogout}
