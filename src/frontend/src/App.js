@@ -27,6 +27,14 @@ class App extends Component {
 		}
 	}
 
+	test = () => {
+		fetch('users/current_user/', {
+			headers: {
+				Authorization: `JWT ${localStorage.getItem('token')}`
+			}
+		})
+	}
+
 	handle_login = (e, data) => {
 		e.preventDefault();
 		fetch('token-auth/', {
