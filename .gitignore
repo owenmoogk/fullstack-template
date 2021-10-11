@@ -1,0 +1,4 @@
+
+*.pyc
+node_modules/
+src/db.sqlite3
