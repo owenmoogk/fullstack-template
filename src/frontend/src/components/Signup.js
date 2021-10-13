@@ -10,7 +10,7 @@ export default function Signup(props) {
 
     function handleSignup(e) {
         e.preventDefault();
-        fetch('/users/users/', {
+        fetch('/users/signup/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

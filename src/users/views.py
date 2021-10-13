@@ -11,7 +11,7 @@ def current_user(request):
     return Response({'username': request.user.username})
 
 
-class UserList(APIView):
+class Signup(APIView):
 
     permission_classes = (permissions.AllowAny,)
 
