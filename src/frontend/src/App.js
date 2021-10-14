@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Nav from './components/Nav';
-import Login from './components/Login';
-import Signup from './components/Signup';
+import Login from './components/accounts/Login';
+import Signup from './components/accounts/Signup';
 import {
 	BrowserRouter as Router,
 	Switch,
